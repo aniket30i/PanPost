@@ -80,7 +80,7 @@ const Panverify = () => {
             </div>
             <div className="mt-5">
               <Input
-                fieldName="Address 1"
+                fieldName="Address 1*"
                 maxLength="140"
                 id="address"
                 name="address"
@@ -102,13 +102,13 @@ const Panverify = () => {
                 type="number"
                 required
               />
-              <div className="flex justify-center">
-                <p>City:Kolkata</p>
-                <p>State:West Bengal</p>
+              <div className="flex mt-1 px-2 gap-4 py-2 bg-indigo-200 w-4/5 rounded-xl">
+                <p>City : Kolkata</p>
+                <p>State : West Bengal</p>
               </div>
             </div>
           </form>
-          <button className="px-5 py-3 bg-indigo-400 hover:scale-105 hover:bg-indigo-500 hover:text-white transition-all duration-400 self-center rounded-full">
+          <button className="px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 hover:bg-indigo-500 hover:text-white transition-all duration-400 self-center rounded-full">
             <div className="flex justify-center gap-1">
               <p>Submit</p>
               <img src={send} className="w-6 h-6"></img>
