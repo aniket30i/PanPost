@@ -1,7 +1,13 @@
 import { useState } from "react";
 import vpf from "../assets/UI/panver-side.svg";
 import send from "../assets/icons/sendico.png";
+import error from "../assets/icons/error.png";
+import success from "../assets/icons/success.png";
 import Input from "./Input";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPanVerify } from "../Redux/UserSlice";
+import { InfinitySpin } from "react-loader-spinner";
+
 const Panverify = () => {
   //   const [formData, setFormData] = useState({
   //     name: "",
@@ -23,6 +29,17 @@ const Panverify = () => {
   //     console.log("Form submitted:", formData);
   //   };
 
+  const dispatch = useDispatch();
+  const status = useSelector((state) => state.pan.status);
+
+  const handlePanverification = (e) => {
+    const val = e.target.value.toUpperCase();
+
+    const panPattern = /^[A-Z]{5}\d{4}[A-Z]{1}$/;
+    if (val.length === 10 && panPattern.test(val));
+    dispatch(fetchPanVerify(val));
+  };
+
   return (
     <div className="drop-shadow-lg bg-slate-100 w-7/12 h-3/4 mx-auto my-14 p-8 rounded-xl">
       <div className="flex justify-center gap-8 h-full">
@@ -43,15 +60,34 @@ const Panverify = () => {
               Personal Information
             </legend>
             <div className="mt-8 flex flex-col gap-1">
-              <Input
-                fieldName="PAN Number*"
-                maxLength="10"
-                id="pan"
-                name="pan"
-                type="text"
-                pattern="^[A-Z]{5}\d{4}[A-Z]{1}$"
-                required
-              />
+              <div id="pan-box" className="flex justify-between">
+                <Input
+                  fieldName="PAN Number*"
+                  maxLength="10"
+                  id="pan"
+                  name="pan"
+                  type="text"
+                  pattern="^[A-Z]{5}\d{4}[A-Z]{1}$"
+                  required
+                  onChange={handlePanverification}
+                />
+                {status === "loading" ? (
+                  <div className="self-end">
+                    <InfinitySpin
+                      visible={true}
+                      width="90"
+                      color="#333"
+                      ariaLabel="infinity-spin-loading"
+                    />
+                  </div>
+                ) : status === "Failed" ? (
+                  <img src={error} className="h-8 w-8 self-end" />
+                ) : status === "Success" ? (
+                  <img src={success} className="h-8 w-8 self-end" />
+                ) : (
+                  ""
+                )}
+              </div>
               <Input
                 fieldName="Full Name*"
                 maxLength="10"

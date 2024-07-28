@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-const fetchPanVerify = createAsyncThunk(
+export const fetchPanVerify = createAsyncThunk(
   "panver/fetchPanVerify",
   async (panNumber) => {
     const url = "https://lab.pixel6.co/api/verify-pan.php";
@@ -15,6 +15,7 @@ const fetchPanVerify = createAsyncThunk(
         body: JSON.stringify(requestBody),
       });
       const data = response.json();
+      console.log(data);
 
       if (data.status === "Success" && data.isValid) {
         return { isValid: true, fullName: data.fullName };
