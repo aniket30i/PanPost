@@ -7,6 +7,7 @@ import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPanVerify, resetState } from "../Redux/UserSlice";
 import { InfinitySpin } from "react-loader-spinner";
+import { fetchPostCode } from "../Redux/PostalSlice";
 
 const Panverify = () => {
   //   const [formData, setFormData] = useState({
@@ -41,6 +42,11 @@ const Panverify = () => {
       dispatch(resetState("failed"));
     if (val.length === 10 && panPattern.test(val))
       dispatch(fetchPanVerify(val));
+  };
+
+  const handlePostfetch = (e) => {
+    const value = e.target.value;
+    const pinPattern = /^\d{6}$/;
   };
 
   return (
@@ -143,7 +149,7 @@ const Panverify = () => {
                 name="postcode"
                 type="text"
                 required
-                onChange={handle}
+                onChange={handlePostfetch}
               />
               <div className="flex mt-6 px-2 gap-4 py-2 bg-indigo-200 w-4/5 rounded-xl">
                 <p>City : Kolkata</p>

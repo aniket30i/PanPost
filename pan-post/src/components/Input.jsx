@@ -24,7 +24,7 @@ const Input = ({
           {...(pattern && { pattern })}
           onChange={onChange}
           className="rounded-xl p-1 px-4 w-4/5 border-2 border-zinc-300 self-start "
-          value={value}
+          defaultValue={value}
         />
       </div>
     </div>
