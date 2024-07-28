@@ -31,6 +31,7 @@ const Panverify = () => {
 
   const dispatch = useDispatch();
   const status = useSelector((state) => state.pan.status);
+  const fullName = useSelector((state) => state.pan.fullName);
 
   const handlePanverification = (e) => {
     const val = e.target.value.toUpperCase();
@@ -99,6 +100,7 @@ const Panverify = () => {
                 name="pan"
                 type="text"
                 required
+                value={status === "Success" ? fullName : ""}
               />
               <Input
                 fieldName="Email*"
@@ -142,19 +144,19 @@ const Panverify = () => {
                 type="number"
                 required
               />
-              <div className="flex mt-1 px-2 gap-4 py-2 bg-indigo-200 w-4/5 rounded-xl">
+              <div className="flex mt-6 px-2 gap-4 py-2 bg-indigo-200 w-4/5 rounded-xl">
                 <p>City : Kolkata</p>
                 <p>State : West Bengal</p>
               </div>
             </div>
           </form>
-          <button className="px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 hover:bg-indigo-500 hover:text-white transition-all duration-400 self-center rounded-full">
-            <div className="flex justify-center gap-1">
-              <p>Submit</p>
-              <img src={send} className="w-6 h-6"></img>
-            </div>
-          </button>
         </div>
+        <button className="px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 hover:bg-indigo-500 hover:text-white transition-all duration-400 self-center rounded-full">
+          <div className="flex justify-center gap-1">
+            <p>Submit</p>
+            <img src={send} className="w-6 h-6"></img>
+          </div>
+        </button>
       </div>
     </div>
   );
