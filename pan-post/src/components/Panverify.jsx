@@ -141,8 +141,9 @@ const Panverify = () => {
                 maxLength="6"
                 id="postcode"
                 name="postcode"
-                type="number"
+                type="text"
                 required
+                onChange={handle}
               />
               <div className="flex mt-6 px-2 gap-4 py-2 bg-indigo-200 w-4/5 rounded-xl">
                 <p>City : Kolkata</p>
