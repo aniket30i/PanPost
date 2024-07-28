@@ -5,9 +5,11 @@ import error from "../assets/icons/error.png";
 import success from "../assets/icons/success.png";
 import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPanVerify, resetState } from "../Redux/UserSlice";
+import { fetchPanVerify, resetStatepan } from "../Redux/UserSlice";
 import { InfinitySpin } from "react-loader-spinner";
-import { fetchPostCode } from "../Redux/PostalSlice";
+import { fetchPostCode, resetStatepost } from "../Redux/PostalSlice";
+import SelectComp from "./SelectComp";
+import { cityData, stateData } from "./Datalist";
 
 const Panverify = () => {
   //   const [formData, setFormData] = useState({
@@ -32,21 +34,32 @@ const Panverify = () => {
 
   const dispatch = useDispatch();
   const status = useSelector((state) => state.pan.status);
+  const statuspost = useSelector((state) => state.postal.status);
+
   const fullName = useSelector((state) => state.pan.fullName);
+  const city = useSelector((state) => state.postal.city);
+  const state = useSelector((state) => state.postal.state);
+
+  console.log(city);
+  console.log(state);
 
   const handlePanverification = (e) => {
     const val = e.target.value.toUpperCase();
-    dispatch(resetState("idle"));
+    dispatch(resetStatepan("idle"));
     const panPattern = /^[A-Z]{5}\d{4}[A-Z]{1}$/;
     if (val.length >= 10 && !panPattern.test(val))
-      dispatch(resetState("failed"));
+      dispatch(resetStatepan("failed"));
     if (val.length === 10 && panPattern.test(val))
       dispatch(fetchPanVerify(val));
   };
 
   const handlePostfetch = (e) => {
-    const value = e.target.value;
+    const val = e.target.value;
+    dispatch(resetStatepost("idle"));
     const pinPattern = /^\d{6}$/;
+    if (val.length >= 10 && !pinPattern.test(val));
+    dispatch(resetStatepost("failed"));
+    if (val.length === 6 && pinPattern.test(val)) dispatch(fetchPostCode(val));
   };
 
   return (
@@ -151,9 +164,17 @@ const Panverify = () => {
                 required
                 onChange={handlePostfetch}
               />
-              <div className="flex mt-6 px-2 gap-4 py-2 bg-indigo-200 w-4/5 rounded-xl">
-                <p>City : Kolkata</p>
-                <p>State : West Bengal</p>
+              <div className="flex mt-6 px-2 justify-between py-1 bg-indigo-100 w-4/5 rounded-xl">
+                <p>City</p>
+                <SelectComp
+                  dataset={cityData}
+                  value={statuspost === "Success" ? city[0]?.name : ""}
+                />
+                <p>State</p>
+                <SelectComp
+                  dataset={stateData}
+                  value={statuspost === "Success" ? state[0]?.name : ""}
+                />
               </div>
             </div>
           </form>

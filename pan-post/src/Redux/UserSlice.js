@@ -38,8 +38,8 @@ const panSlice = createSlice({
     error: null,
   },
   reducers: {
-    resetState: (state, payload) => {
-      state.status = payload.payload;
+    resetStatepan: (state, action) => {
+      state.status = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -59,5 +59,5 @@ const panSlice = createSlice({
   },
 });
 
-export const { resetState } = panSlice.actions;
+export const { resetStatepan } = panSlice.actions;
 export default panSlice.reducer;
