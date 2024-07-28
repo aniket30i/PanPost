@@ -37,7 +37,11 @@ const panSlice = createSlice({
     status: "idle",
     error: null,
   },
-  reducers: {},
+  reducers: {
+    resetState: (state, payload) => {
+      state.status = payload.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPanVerify.pending, (state) => {
@@ -55,4 +59,5 @@ const panSlice = createSlice({
   },
 });
 
+export const { resetState } = panSlice.actions;
 export default panSlice.reducer;

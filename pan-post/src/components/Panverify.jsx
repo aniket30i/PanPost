@@ -5,7 +5,7 @@ import error from "../assets/icons/error.png";
 import success from "../assets/icons/success.png";
 import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPanVerify } from "../Redux/UserSlice";
+import { fetchPanVerify, resetState } from "../Redux/UserSlice";
 import { InfinitySpin } from "react-loader-spinner";
 
 const Panverify = () => {
@@ -34,10 +34,12 @@ const Panverify = () => {
 
   const handlePanverification = (e) => {
     const val = e.target.value.toUpperCase();
-
+    dispatch(resetState("idle"));
     const panPattern = /^[A-Z]{5}\d{4}[A-Z]{1}$/;
-    if (val.length === 10 && panPattern.test(val));
-    dispatch(fetchPanVerify(val));
+    if (val.length >= 10 && !panPattern.test(val))
+      dispatch(resetState("failed"));
+    if (val.length === 10 && panPattern.test(val))
+      dispatch(fetchPanVerify(val));
   };
 
   return (
@@ -71,7 +73,7 @@ const Panverify = () => {
                   required
                   onChange={handlePanverification}
                 />
-                {status === "loading" ? (
+                {status === "loading" && (
                   <div className="self-end">
                     <InfinitySpin
                       visible={true}
@@ -80,12 +82,14 @@ const Panverify = () => {
                       ariaLabel="infinity-spin-loading"
                     />
                   </div>
-                ) : status === "Failed" ? (
+                )}
+
+                {status === "failed" && (
                   <img src={error} className="h-8 w-8 self-end" />
-                ) : status === "Success" ? (
+                )}
+
+                {status === "Success" && (
                   <img src={success} className="h-8 w-8 self-end" />
-                ) : (
-                  ""
                 )}
               </div>
               <Input
