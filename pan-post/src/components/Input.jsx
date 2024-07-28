@@ -8,7 +8,7 @@ const Input = ({
   fieldName,
   required,
   pattern,
-  styles,
+  onChange = () => {},
 }) => {
   return (
     <div>
@@ -21,7 +21,8 @@ const Input = ({
           maxLength={maxLength}
           {...(required && { required })}
           {...(pattern && { pattern })}
-          className="rounded-xl p-1 px-4 w-4/5 border-2 border-zinc-300 self-start"
+          onChange={onChange}
+          className="rounded-xl p-1 px-4 w-4/5 border-2 border-zinc-300 self-start "
         />
       </div>
     </div>
