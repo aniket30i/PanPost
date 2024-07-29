@@ -35,8 +35,8 @@ const postalSlice = createSlice({
   name: "postal",
   initialState: {
     status: "idle",
-    city: [],
-    state: [],
+    city: "",
+    state: "",
     error: null,
   },
   reducers: {
@@ -51,8 +51,8 @@ const postalSlice = createSlice({
       })
       .addCase(fetchPostCode.fulfilled, (state, action) => {
         state.status = "Success";
-        state.city = action.payload.city;
-        state.state = action.payload.state;
+        state.city = action.payload.city[0].name;
+        state.state = action.payload.state[0].name;
       })
       .addCase(fetchPostCode.rejected, (state, action) => {
         state.status = "failed";

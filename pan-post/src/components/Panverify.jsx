@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import vpf from "../assets/UI/panver-side.svg";
 import send from "../assets/icons/sendico.png";
 import error from "../assets/icons/error.png";
@@ -10,13 +10,54 @@ import { InfinitySpin } from "react-loader-spinner";
 import { fetchPostCode, resetStatepost } from "../Redux/PostalSlice";
 import SelectComp from "./SelectComp";
 import { cityData, stateData } from "./Datalist";
+import { debounce } from "lodash";
 
 const Panverify = () => {
-  //   const [formData, setFormData] = useState({
-  //     name: "",
-  //     email: "",
-  //     message: "",
-  //   });
+  const dispatch = useDispatch();
+  const status = useSelector((state) => state.pan.status);
+  const statuspost = useSelector((state) => state.postal.status);
+
+  const fullName = useSelector((state) => state.pan.fullName);
+
+  const city = useSelector((state) => state.postal.city);
+  const state = useSelector((state) => state.postal.state);
+
+  const [formData, setFormData] = useState({
+    pan: "",
+    fullName: "",
+    email: "",
+    contact: "",
+    address: [],
+    postcode: "",
+    city: "",
+    state: "",
+  });
+
+  const [isPanVerified, setIsPanVerified] = useState(false);
+  const [isPostFetched, setIsPostFetched] = useState(false);
+
+  const handleSlowInput = useCallback(
+    debounce((name, value) => {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }, 5000),
+    []
+  );
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    handleSlowInput(name, value);
+  };
+
+  useEffect(() => {
+    if (status === "Success") {
+      setFormData((prevData) => ({
+        ...prevData,
+        fullName: fullName,
+      }));
+    }
+  }, [fullName, status]);
+
+  console.log(formData);
 
   //   const handleChange = (e) => {
   //     const { name, value } = e.target;
@@ -32,16 +73,19 @@ const Panverify = () => {
   //     console.log("Form submitted:", formData);
   //   };
 
-  const dispatch = useDispatch();
-  const status = useSelector((state) => state.pan.status);
-  const statuspost = useSelector((state) => state.postal.status);
+  const updateField = (name, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-  const fullName = useSelector((state) => state.pan.fullName);
-  const city = useSelector((state) => state.postal.city);
-  const state = useSelector((state) => state.postal.state);
-
-  console.log(city);
-  console.log(state);
+  useEffect(() => {
+    if (statuspost === "Success") {
+      updateField("city", city);
+      updateField("state", state);
+    }
+  }, [status, statuspost, city, state]);
 
   const handlePanverification = (e) => {
     const val = e.target.value.toUpperCase();
@@ -49,8 +93,11 @@ const Panverify = () => {
     const panPattern = /^[A-Z]{5}\d{4}[A-Z]{1}$/;
     if (val.length >= 10 && !panPattern.test(val))
       dispatch(resetStatepan("failed"));
-    if (val.length === 10 && panPattern.test(val))
+    if (val.length === 10 && panPattern.test(val)) {
       dispatch(fetchPanVerify(val));
+      if (status === "Success") setIsPanVerified(true);
+      updateField("pan", val);
+    }
   };
 
   const handlePostfetch = (e) => {
@@ -59,7 +106,27 @@ const Panverify = () => {
     const pinPattern = /^\d{6}$/;
     if (val.length >= 10 && !pinPattern.test(val));
     dispatch(resetStatepost("failed"));
-    if (val.length === 6 && pinPattern.test(val)) dispatch(fetchPostCode(val));
+    if (val.length === 6 && pinPattern.test(val)) {
+      dispatch(fetchPostCode(val));
+      if (statuspost === "Success") setIsPostFetched(true);
+      updateField("postcode", val);
+    }
+  };
+
+  //////////////////////////////////
+
+  const handleSubmit = (e) => {
+    // e.preventDefault();
+    // if(isPanVerified && isPostFetched)
+    // {
+    //   const currentData={...formData};
+    //   setFormData((prevData)=>({
+    //     ...prevData,
+    //     ...currentData,
+    //     pan:...prevData.pan,
+    //     postcode:...prevData.postcode,
+    //   }))
+    // }
   };
 
   return (
@@ -92,6 +159,7 @@ const Panverify = () => {
                   pattern="^[A-Z]{5}\d{4}[A-Z]{1}$"
                   required
                   onChange={handlePanverification}
+                  value={formData.pan}
                 />
                 {status === "loading" && (
                   <div className="self-end">
@@ -115,11 +183,12 @@ const Panverify = () => {
               <Input
                 fieldName="Full Name*"
                 maxLength="10"
-                id="pan"
-                name="pan"
+                id="fullName"
+                name="fullName"
                 type="text"
                 required
-                value={status === "Success" ? fullName : ""}
+                onChange={handleInputChange}
+                value={formData.fullName}
               />
               <Input
                 fieldName="Email*"
@@ -128,6 +197,8 @@ const Panverify = () => {
                 name="email"
                 type="email"
                 required
+                onChange={handleInputChange}
+                value={formData.email}
               />
               <Input
                 fieldName="Mobile*"
@@ -137,6 +208,8 @@ const Panverify = () => {
                 type="tel"
                 pattern="\+91[0-9]{10}"
                 required
+                onChange={handleInputChange}
+                value={formData.mobile}
               />
             </div>
             <div className="mt-5">
@@ -147,6 +220,8 @@ const Panverify = () => {
                 name="address"
                 type="text"
                 required
+                onChange={handleInputChange}
+                value={formData.address}
               />
               <Input
                 fieldName="Address 2"
@@ -154,32 +229,51 @@ const Panverify = () => {
                 id="address"
                 name="address"
                 type="text"
+                onChange={handleInputChange}
               />
-              <Input
-                fieldName="Postal code"
-                maxLength="6"
-                id="postcode"
-                name="postcode"
-                type="text"
-                required
-                onChange={handlePostfetch}
-              />
+              <div className="flex justify between">
+                <Input
+                  fieldName="Postal code"
+                  maxLength="6"
+                  id="postcode"
+                  name="postcode"
+                  type="text"
+                  required
+                  onChange={handlePostfetch}
+                  value={formData.postcode}
+                />
+                {statuspost === "loading" && (
+                  <div className="self-end">
+                    <InfinitySpin
+                      visible={true}
+                      width="90"
+                      color="#333"
+                      ariaLabel="infinity-spin-loading"
+                    />
+                  </div>
+                )}
+
+                {statuspost === "failed" && (
+                  <img src={error} className="h-8 w-8 self-end" />
+                )}
+
+                {statuspost === "Success" && (
+                  <img src={success} className="h-8 w-8 self-end" />
+                )}
+              </div>
               <div className="flex mt-6 px-2 justify-between py-1 bg-indigo-100 w-4/5 rounded-xl">
                 <p>City</p>
-                <SelectComp
-                  dataset={cityData}
-                  value={statuspost === "Success" ? city[0]?.name : ""}
-                />
+                <SelectComp dataset={cityData} value={formData.city} />
                 <p>State</p>
-                <SelectComp
-                  dataset={stateData}
-                  value={statuspost === "Success" ? state[0]?.name : ""}
-                />
+                <SelectComp dataset={stateData} value={formData.state} />
               </div>
             </div>
           </form>
         </div>
-        <button className="px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 hover:bg-indigo-500 hover:text-white transition-all duration-400 self-center rounded-full">
+        <button
+          className="px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 hover:bg-indigo-500 hover:text-white transition-all duration-400 self-center rounded-full"
+          onClick={handleSubmit}
+        >
           <div className="flex justify-center gap-1">
             <p>Submit</p>
             <img src={send} className="w-6 h-6"></img>
