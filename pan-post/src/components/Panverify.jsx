@@ -179,7 +179,7 @@ const Panverify = () => {
               />
               <Input
                 fieldName="Mobile*"
-                maxLength="14"
+                maxLength="13"
                 id="contact"
                 name="contact"
                 type="tel"

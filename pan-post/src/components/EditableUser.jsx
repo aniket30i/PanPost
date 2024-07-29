@@ -3,10 +3,10 @@ import { useState } from "react";
 const EditableUser = ({
   entry,
   index,
-  handleAdditionalAddressChange,
-  handleAddressChange,
-  handleSaveClick,
   handleEditClick,
+  handleAddressChange,
+  handleAdditionalAddressChange,
+  handleSaveClick,
   isEditing,
   currentEditIndex,
   fetchFromLocalStorage,
@@ -23,7 +23,7 @@ const EditableUser = ({
     const addressData = JSON.parse(data);
     const filterAddress = addressData.filter((data) => data.id !== entry.id);
     const addAddressFiltered = addressData.filter(
-      (data) => data.id === entry.id,
+      (data) => data.id === entry.id
     );
     if (addAddressFiltered[0]["newAddress"]) {
       addAddressFiltered[0]["newAddress"] = [
@@ -35,7 +35,7 @@ const EditableUser = ({
     }
     localStorage.setItem(
       "formEntries",
-      JSON.stringify([...filterAddress, ...addAddressFiltered]),
+      JSON.stringify([...filterAddress, ...addAddressFiltered])
     );
     fetchFromLocalStorage();
   };
@@ -78,7 +78,7 @@ const EditableUser = ({
         <strong>State:</strong> {entry.state}
       </p>
       <button
-        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+        className="mt-2 px-4 py-2 bg-indigo-500 text-white rounded"
         onClick={() => handleEditClick(index)}
       >
         Edit Address
