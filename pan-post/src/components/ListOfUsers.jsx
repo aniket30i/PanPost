@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
+import nothing from "../assets/UI/postcode-side.svg";
+import { toast } from "react-toastify";
 
 const ListOfUsers = () => {
   const [storedEntries, setStoredEntries] = useState([]);
@@ -8,12 +10,23 @@ const ListOfUsers = () => {
   const [newAddress, setNewAddress] = useState("");
   const [additionalAddress, setAdditionalAddress] = useState("");
 
+  ///// Accessing the content from the local ///////////
   useEffect(() => {
     const entries = localStorage.getItem("formEntries");
     if (entries) {
       setStoredEntries(JSON.parse(entries));
     }
   }, []);
+
+  //// clean the full storage //////
+
+  const clearStorage = () => {
+    localStorage.removeItem("formEntries");
+    setStoredEntries([]);
+    toast.info("Local storage cleared!");
+  };
+
+  ///// Edit address handling
 
   const handleEditClick = (index) => {
     setCurrentEditIndex(index);
@@ -25,6 +38,7 @@ const ListOfUsers = () => {
     setNewAddress(e.target.value);
   };
 
+  ////Addtional address handler////////
   const handleAdditionalAddressChange = (e) => {
     setAdditionalAddress(e.target.value);
   };
@@ -60,6 +74,14 @@ const ListOfUsers = () => {
   return (
     <>
       <Navbar />
+      <div className="flex justify-center bg-zinc-200 ">
+        <button
+          className="bg-red-500 p-4 rounded-lg text-lg text-slate-100"
+          onClick={clearStorage}
+        >
+          Clear List
+        </button>
+      </div>
       {storedEntries.length > 0 ? (
         <div>
           <h2>List of Users</h2>
@@ -132,7 +154,10 @@ const ListOfUsers = () => {
           </ul>
         </div>
       ) : (
-        <p>Storage is empty</p>
+        <div className="flex w-full flex-col mt-5 mx-auto gap-10">
+          <h1 className="text-4xl self-center">Nothing to show.....</h1>
+          <img src={nothing} className="h-1/4 w-1/4 self-center" />
+        </div>
       )}
     </>
   );

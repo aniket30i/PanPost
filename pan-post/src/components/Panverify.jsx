@@ -5,9 +5,9 @@ import error from "../assets/icons/error.png";
 import success from "../assets/icons/success.png";
 import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPanVerify, resetStatepan } from "../Redux/UserSlice";
+import { fetchPanVerify, resetStatepan } from "../Store/UserSlice";
 import { InfinitySpin } from "react-loader-spinner";
-import { fetchPostCode, resetStatepost } from "../Redux/PostalSlice";
+import { fetchPostCode, resetStatepost } from "../Store/PostalSlice";
 import SelectComp from "./SelectComp";
 import { cityData, stateData } from "./Datalist";
 import { debounce } from "lodash";
@@ -19,7 +19,6 @@ const Panverify = () => {
   const statuspost = useSelector((state) => state.postal.status);
 
   const fullName = useSelector((state) => state.pan.fullName);
-
   const city = useSelector((state) => state.postal.city);
   const state = useSelector((state) => state.postal.state);
 
@@ -35,15 +34,14 @@ const Panverify = () => {
     state: "",
   });
 
-  const [isPanVerified, setIsPanVerified] = useState(false);
-  const [isPostFetched, setIsPostFetched] = useState(false);
-
   const handleSlowInput = useCallback(
     debounce((name, value) => {
       setFormData((prevData) => ({ ...prevData, [name]: value }));
-    }, 5000),
+    }, 3000),
     []
   );
+
+  // A 3 second debouncer to reduce re-renders
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +57,7 @@ const Panverify = () => {
     }
   }, [fullName, status]);
 
-  console.log("this is test purpose", formData);
+  // console.log("this is test purpose", formData);
 
   const updateField = (name, value) => {
     setFormData((prevData) => ({
@@ -75,6 +73,7 @@ const Panverify = () => {
     }
   }, [status, statuspost, city, state]);
 
+  ///////////// Pan verification dispatch //////////////
   const handlePanverification = (e) => {
     const val = e.target.value.toUpperCase();
     dispatch(resetStatepan("idle"));
@@ -88,6 +87,7 @@ const Panverify = () => {
     }
   };
 
+  ///////////// Postal code dispatch //////////////
   const handlePostfetch = (e) => {
     const val = e.target.value;
     dispatch(resetStatepost("idle"));
@@ -101,7 +101,7 @@ const Panverify = () => {
     }
   };
 
-  //////////////////////////////////
+  //////// Saving full data to local storage ////////
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -109,8 +109,7 @@ const Panverify = () => {
     formEntries.push({ ...formData, id: formData.pan });
     localStorage.setItem("formEntries", JSON.stringify(formEntries));
 
-    const notify = () => toast("Submitted!");
-    notify();
+    toast.success("Submitted");
 
     console.log("this is submission", formData);
     console.log("Submitted");
