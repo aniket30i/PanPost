@@ -188,7 +188,7 @@ const Panverify = () => {
               />
               <Input
                 fieldName="Mobile*"
-                maxLength="10"
+                maxLength="14"
                 id="contact"
                 name="contact"
                 type="tel"
@@ -196,6 +196,7 @@ const Panverify = () => {
                 required
                 onChange={handleInputChange}
                 value={formData.mobile}
+                prefix="+91 "
               />
             </div>
             <div className="mt-5">

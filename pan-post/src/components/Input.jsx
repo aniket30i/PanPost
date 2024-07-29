@@ -10,6 +10,7 @@ const Input = ({
   pattern,
   onChange = () => {}, // on operation
   value = "",
+  prefix = "",
 }) => {
   return (
     <div>
@@ -24,7 +25,7 @@ const Input = ({
           {...(pattern && { pattern })}
           onChange={onChange}
           className="rounded-xl p-1 px-4 w-4/5 border-2 border-zinc-300 self-start "
-          defaultValue={value}
+          defaultValue={`${prefix}${value}`}
         />
       </div>
     </div>
