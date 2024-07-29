@@ -4,8 +4,6 @@ const EditableUser = ({
   entry,
   index,
   handleEditClick,
-  handleAddressChange,
-  handleAdditionalAddressChange,
   handleSaveClick,
   isEditing,
   currentEditIndex,
@@ -39,6 +37,8 @@ const EditableUser = ({
     );
     fetchFromLocalStorage();
   };
+
+  const han
 
   return (
     <li key={index} className="border p-2 my-2">
