@@ -15,7 +15,6 @@ export const fetchPanVerify = createAsyncThunk(
         body: JSON.stringify(requestBody),
       });
       const data = await response.json();
-      console.log(data);
 
       if (data.status === "Success" && data.isValid) {
         return { isValid: true, fullName: data.fullName };
@@ -26,7 +25,7 @@ export const fetchPanVerify = createAsyncThunk(
       console.error(error);
       throw new Error("Failed to verify PAN");
     }
-  }
+  },
 );
 
 const panSlice = createSlice({

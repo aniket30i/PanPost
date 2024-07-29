@@ -16,7 +16,7 @@ export const fetchPostCode = createAsyncThunk(
       });
 
       const data = await response.json();
-      console.log(data);
+
       if (data.status === "Success" && data.statusCode === 200) {
         return {
           city: data.city,
@@ -28,7 +28,7 @@ export const fetchPostCode = createAsyncThunk(
     } catch (error) {
       throw new Error("Failed to fetch postcode details");
     }
-  }
+  },
 );
 
 const postalSlice = createSlice({

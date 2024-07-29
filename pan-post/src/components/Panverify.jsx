@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import vpf from "../assets/UI/panver-side.svg";
 import send from "../assets/icons/sendico.png";
 import error from "../assets/icons/error.png";
@@ -10,7 +10,6 @@ import { InfinitySpin } from "react-loader-spinner";
 import { fetchPostCode, resetStatepost } from "../Store/PostalSlice";
 import SelectComp from "./SelectComp";
 import { cityData, stateData } from "./Datalist";
-import { debounce } from "lodash";
 import { toast } from "react-toastify";
 
 const Panverify = () => {
@@ -33,20 +32,6 @@ const Panverify = () => {
     city: "",
     state: "",
   });
-
-  const handleSlowInput = useCallback(
-    debounce((name, value) => {
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
-    }, 3000),
-    []
-  );
-
-  // A 3 second debouncer to reduce re-renders
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    handleSlowInput(name, value);
-  };
 
   useEffect(() => {
     if (status === "Success") {
@@ -82,8 +67,7 @@ const Panverify = () => {
       dispatch(resetStatepan("failed"));
     if (val.length === 10 && panPattern.test(val)) {
       dispatch(fetchPanVerify(val));
-      if (status === "Success") setIsPanVerified(true);
-      updateField("pan", val);
+      if (status === "Success") updateField("pan", val);
     }
   };
 
@@ -96,8 +80,7 @@ const Panverify = () => {
     dispatch(resetStatepost("failed"));
     if (val.length === 6 && pinPattern.test(val)) {
       dispatch(fetchPostCode(val));
-      if (statuspost === "Success") setIsPostFetched(true);
-      updateField("postcode", val);
+      if (statuspost === "Success") updateField("postcode", val);
     }
   };
 
@@ -105,18 +88,28 @@ const Panverify = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    const userInput = {
+      pan: formData.get("pan"),
+      fullName: formData.get("fullName"),
+      email: formData.get("email"),
+      contact: formData.get("contact"),
+      address1: formData.get("address1"),
+      address2: formData.get("address2"),
+      postcode: formData.get("postcode"),
+      city: city,
+      state: state,
+    };
     const formEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
-    formEntries.push({ ...formData, id: formData.pan });
+    const randomId = Math.floor(Math.random() * 19856789) + 84955445;
+    formEntries.push({ ...userInput, id: randomId });
     localStorage.setItem("formEntries", JSON.stringify(formEntries));
 
     toast.success("Submitted");
-
-    console.log("this is submission", formData);
-    console.log("Submitted");
   };
 
   return (
-    <div className="drop-shadow-lg bg-slate-100 w-7/12 h-3/4 mx-auto my-14 p-8 rounded-xl">
+    <div className="drop-shadow-lg bg-slate-100 w-7/12 h-3/4 mx-auto my-14 p-8 rounded-xl overflow-hidden">
       <div className="flex justify-center gap-8 h-full">
         <div className="w-1/2 bg-indigo-500 flex flex-col items-center p-4 gap-24 rounded-xl">
           <h1 className="text-2xl leading-10 font-bold text-slate-100 self-start">
@@ -129,8 +122,8 @@ const Panverify = () => {
           </p>
           <img src={vpf} alt="placeholdersvg" className="w-48 h-48" />
         </div>
-        <div className="w-1/2 h-full bg-slate-100 border-2 rounded-xl border-indigo-500 p-4 overflow-y-auto">
-          <form action="" className="">
+        <div className="w-1/2 h-full bg-slate-100 border-2 rounded-xl border-indigo-500 p-4 overflow-y-auto customscrollbar">
+          <form onSubmit={handleSubmit} method="GET" className="">
             <legend className="flex justify-center text-xl">
               Personal Information
             </legend>
@@ -173,7 +166,6 @@ const Panverify = () => {
                 name="fullName"
                 type="text"
                 required
-                onChange={handleInputChange}
                 value={formData.fullName}
               />
               <Input
@@ -183,7 +175,6 @@ const Panverify = () => {
                 name="email"
                 type="email"
                 required
-                onChange={handleInputChange}
                 value={formData.email}
               />
               <Input
@@ -194,9 +185,8 @@ const Panverify = () => {
                 type="tel"
                 pattern="\+91[0-9]{10}"
                 required
-                onChange={handleInputChange}
+                prefix={"+91"}
                 value={formData.mobile}
-                prefix="+91 "
               />
             </div>
             <div className="mt-5">
@@ -207,7 +197,6 @@ const Panverify = () => {
                 name="address1"
                 type="text"
                 required
-                onChange={handleInputChange}
                 value={formData.address}
               />
               <Input
@@ -216,7 +205,6 @@ const Panverify = () => {
                 id="address2"
                 name="address2"
                 type="text"
-                onChange={handleInputChange}
               />
               <div className="flex justify between">
                 <Input
@@ -260,22 +248,22 @@ const Panverify = () => {
                 </div>
               </div>
             </div>
+            <button
+              type="submit"
+              disabled={!(status === "Success" && statuspost === "Success")}
+              className={`px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 ${
+                status === "Success" && statuspost === "Success"
+                  ? "bg-indigo-400 hover:bg-indigo-500 hover:text-white transition-all duration-400"
+                  : "bg-slate-200"
+              } self-center rounded-full`}
+            >
+              <div className="flex justify-center gap-1">
+                <p>Submit</p>
+                <img src={send} className="w-6 h-6"></img>
+              </div>
+            </button>
           </form>
         </div>
-        <button
-          onClick={handleSubmit}
-          disabled={!(status === "Success" && statuspost === "Success")}
-          className={`px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 ${
-            status === "Success" && statuspost === "Success"
-              ? "bg-indigo-400 hover:bg-indigo-500 hover:text-white transition-all duration-400"
-              : "bg-slate-200"
-          } self-center rounded-full`}
-        >
-          <div className="flex justify-center gap-1">
-            <p>Submit</p>
-            <img src={send} className="w-6 h-6"></img>
-          </div>
-        </button>
       </div>
     </div>
   );

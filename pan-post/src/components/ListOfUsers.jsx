@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import nothing from "../assets/UI/postcode-side.svg";
 import { toast } from "react-toastify";
+import EditableUser from "./EditableUser.jsx";
 
 const ListOfUsers = () => {
   const [storedEntries, setStoredEntries] = useState([]);
@@ -11,11 +12,14 @@ const ListOfUsers = () => {
   const [additionalAddress, setAdditionalAddress] = useState("");
 
   ///// Accessing the content from the local ///////////
-  useEffect(() => {
+  const fetchFromLocalStorage = () => {
     const entries = localStorage.getItem("formEntries");
     if (entries) {
       setStoredEntries(JSON.parse(entries));
     }
+  };
+  useEffect(() => {
+    fetchFromLocalStorage();
   }, []);
 
   //// clean the full storage //////
@@ -87,69 +91,20 @@ const ListOfUsers = () => {
           <h2>List of Users</h2>
           <ul>
             {storedEntries.map((entry, index) => (
-              <li key={index} className="border p-2 my-2">
-                <p>
-                  <strong>PAN:</strong> {entry.pan}
-                </p>
-                <p>
-                  <strong>Full Name:</strong> {entry.fullName}
-                </p>
-                <p>
-                  <strong>Email:</strong> {entry.email}
-                </p>
-                <p>
-                  <strong>Contact:</strong> {entry.contact}
-                </p>
-                <p>
-                  <strong>Addresses:</strong> {entry.address}
-                </p>
-                <p>
-                  <strong>Postcode:</strong> {entry.postcode}
-                </p>
-                <p>
-                  <strong>City:</strong> {entry.city}
-                </p>
-                <p>
-                  <strong>State:</strong> {entry.state}
-                </p>
-                <button
-                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-                  onClick={() => handleEditClick(index)}
-                >
-                  Edit Address
-                </button>
-                {isEditing && currentEditIndex === index && (
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      value={newAddress}
-                      onChange={handleAddressChange}
-                      className="border p-2 w-full"
-                    />
-                    <button
-                      className="mt-2 px-4 py-2 bg-green-500 text-white rounded"
-                      onClick={handleSaveClick}
-                    >
-                      Save
-                    </button>
-                  </div>
-                )}
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    value={additionalAddress}
-                    onChange={handleAdditionalAddressChange}
-                    placeholder="Add another address"
-                    className="border p-2 w-full"
-                  />
-                  <button
-                    className="mt-2 px-4 py-2 bg-green-500 text-white rounded"
-                    onClick={() => handleAddAddressClick(index)}
-                  >
-                    Add Address
-                  </button>
-                </div>
-              </li>
+              <EditableUser
+                entry={entry}
+                key={index}
+                handleEditClick={handleEditClick}
+                handleAddressChange={handleAddressChange}
+                handleAdditionalAddressChange={handleAdditionalAddressChange}
+                handleSaveClick={handleSaveClick}
+                currentEditIndex={currentEditIndex}
+                newAddress={newAddress}
+                additionalAddress={additionalAddress}
+                isEditing={isEditing}
+                fetchFromLocalStorage={fetchFromLocalStorage}
+                handleAddAddressClick={(index) => handleAddAddressClick(index)}
+              />
             ))}
           </ul>
         </div>
