@@ -11,6 +11,7 @@ import { fetchPostCode, resetStatepost } from "../Redux/PostalSlice";
 import SelectComp from "./SelectComp";
 import { cityData, stateData } from "./Datalist";
 import { debounce } from "lodash";
+import { toast } from "react-toastify";
 
 const Panverify = () => {
   const dispatch = useDispatch();
@@ -107,6 +108,9 @@ const Panverify = () => {
     const formEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
     formEntries.push({ ...formData, id: formData.pan });
     localStorage.setItem("formEntries", JSON.stringify(formEntries));
+
+    const notify = () => toast("Submitted!");
+    notify();
 
     console.log("this is submission", formData);
     console.log("Submitted");
