@@ -17,6 +17,7 @@ const ListOfUsers = () => {
     if (entries) {
       setStoredEntries(JSON.parse(entries));
     }
+    console.log(entries);
   };
   useEffect(() => {
     fetchFromLocalStorage();
@@ -38,15 +39,6 @@ const ListOfUsers = () => {
     setNewAddress(storedEntries[index].address);
   };
 
-  const handleAddressChange = (e) => {
-    setNewAddress(e.target.value);
-  };
-
-  ////Addtional address handler////////
-  const handleAdditionalAddressChange = (e) => {
-    setAdditionalAddress(e.target.value);
-  };
-
   const handleSaveClick = () => {
     const updatedEntries = [...storedEntries];
     updatedEntries[currentEditIndex].address = newAddress
@@ -61,6 +53,7 @@ const ListOfUsers = () => {
     setNewAddress("");
   };
 
+  ////Addtional address handler////////
   const handleAddAddressClick = (index) => {
     if (additionalAddress.trim() === "") return;
 
@@ -95,8 +88,6 @@ const ListOfUsers = () => {
                 entry={entry}
                 key={index}
                 handleEditClick={handleEditClick}
-                handleAddressChange={handleAddressChange}
-                handleAdditionalAddressChange={handleAdditionalAddressChange}
                 handleSaveClick={handleSaveClick}
                 currentEditIndex={currentEditIndex}
                 newAddress={newAddress}

@@ -38,8 +38,6 @@ const EditableUser = ({
     fetchFromLocalStorage();
   };
 
-  const han
-
   return (
     <li key={index} className="border p-2 my-2">
       <p>
