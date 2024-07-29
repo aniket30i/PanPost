@@ -27,7 +27,8 @@ const Panverify = () => {
     fullName: "",
     email: "",
     contact: "",
-    address: [],
+    address1: "",
+    address2: "",
     postcode: "",
     city: "",
     state: "",
@@ -57,21 +58,7 @@ const Panverify = () => {
     }
   }, [fullName, status]);
 
-  console.log(formData);
-
-  //   const handleChange = (e) => {
-  //     const { name, value } = e.target;
-  //     setFormData({
-  //       ...formData,
-  //       [name]: value,
-  //     });
-  //   };
-
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault();
-  //     // Handle form submission
-  //     console.log("Form submitted:", formData);
-  //   };
+  console.log("this is test purpose", formData);
 
   const updateField = (name, value) => {
     setFormData((prevData) => ({
@@ -116,17 +103,13 @@ const Panverify = () => {
   //////////////////////////////////
 
   const handleSubmit = (e) => {
-    // e.preventDefault();
-    // if(isPanVerified && isPostFetched)
-    // {
-    //   const currentData={...formData};
-    //   setFormData((prevData)=>({
-    //     ...prevData,
-    //     ...currentData,
-    //     pan:...prevData.pan,
-    //     postcode:...prevData.postcode,
-    //   }))
-    // }
+    e.preventDefault();
+    const formEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
+    formEntries.push({ ...formData, id: formData.pan });
+    localStorage.setItem("formEntries", JSON.stringify(formEntries));
+
+    console.log("this is submission", formData);
+    console.log("Submitted");
   };
 
   return (
@@ -143,7 +126,7 @@ const Panverify = () => {
           </p>
           <img src={vpf} alt="placeholdersvg" className="w-48 h-48" />
         </div>
-        <div className="w-1/2 h-full bg-slate-100 border-2 rounded-xl border-indigo-500 p-4">
+        <div className="w-1/2 h-full bg-slate-100 border-2 rounded-xl border-indigo-500 p-4 overflow-y-auto">
           <form action="" className="">
             <legend className="flex justify-center text-xl">
               Personal Information
@@ -216,8 +199,8 @@ const Panverify = () => {
               <Input
                 fieldName="Address 1*"
                 maxLength="140"
-                id="address"
-                name="address"
+                id="address1"
+                name="address1"
                 type="text"
                 required
                 onChange={handleInputChange}
@@ -226,8 +209,8 @@ const Panverify = () => {
               <Input
                 fieldName="Address 2"
                 maxLength="140"
-                id="address"
-                name="address"
+                id="address2"
+                name="address2"
                 type="text"
                 onChange={handleInputChange}
               />
@@ -261,18 +244,28 @@ const Panverify = () => {
                   <img src={success} className="h-8 w-8 self-end" />
                 )}
               </div>
-              <div className="flex mt-6 px-2 justify-between py-1 bg-indigo-100 w-4/5 rounded-xl">
-                <p>City</p>
-                <SelectComp dataset={cityData} value={formData.city} />
-                <p>State</p>
-                <SelectComp dataset={stateData} value={formData.state} />
+              <div className="flex mt-6 px-2 justify-between py-1  w-4/5 rounded-xl drop-shadow-lg">
+                <div className="flex flex-col justify-center">
+                  <p>City</p>
+                  <SelectComp dataset={cityData} value={formData.city} />
+                </div>
+
+                <div className="flex flex-col justify-center">
+                  <p>State</p>
+                  <SelectComp dataset={stateData} value={formData.state} />
+                </div>
               </div>
             </div>
           </form>
         </div>
         <button
-          className="px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 hover:bg-indigo-500 hover:text-white transition-all duration-400 self-center rounded-full"
           onClick={handleSubmit}
+          disabled={!(status === "Success" && statuspost === "Success")}
+          className={`px-5 py-3 mt-2 bg-indigo-400 hover:scale-105 ${
+            status === "Success" && statuspost === "Success"
+              ? "bg-indigo-400 hover:bg-indigo-500 hover:text-white transition-all duration-400"
+              : "bg-slate-200"
+          } self-center rounded-full`}
         >
           <div className="flex justify-center gap-1">
             <p>Submit</p>

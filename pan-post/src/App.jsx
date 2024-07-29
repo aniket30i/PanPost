@@ -1,12 +1,20 @@
-import Navbar from "./components/Navbar";
-import Panverify from "./components/Panverify";
+import Home from "./components/Home";
+import ListOfUsers from "./components/ListOfUsers";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  BrowserRouter,
+} from "react-router-dom";
 
 function App() {
   return (
-    <div className="bg-slate-200 h-screen">
-      <Navbar />
-      <Panverify />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/List" element={<ListOfUsers />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
